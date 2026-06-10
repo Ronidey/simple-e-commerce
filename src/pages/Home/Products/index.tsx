@@ -16,13 +16,16 @@ import clsx from "../../../lib/clsx";
 export default function Products() {
   const { appState } = useAppContext();
   const [searchParams, setSearchParams] = useSearchParams();
-  const currentPage = Number(searchParams.get("page")) || 1;
   const { appDispatch } = useAppContext();
   const filters = parseFilters(searchParams);
 
   // filtering products based on client side filter => brand, price range
   const filteredProducts = appState.products.data.filter((product) => {
-    if (filters.brand.length && !filters.brand.includes(product.brand))
+    if (
+      product.brand &&
+      filters.brand.length &&
+      !filters.brand.includes(product.brand)
+    )
       return false;
 
     if (filters.minPrice && product.price < filters.minPrice) return false;
@@ -32,11 +35,11 @@ export default function Products() {
     return true;
   });
 
-  const appliedFilters: string[] = [];
+  const appliedClientFilters: string[] = [];
 
-  if (filters.brand.length) appliedFilters.push(FILTERS.BRAND);
-  if (filters.minPrice) appliedFilters.push(FILTERS.MIN_PRICE);
-  if (filters.maxPrice) appliedFilters.push(FILTERS.MAX_PRICE);
+  if (filters.brand.length) appliedClientFilters.push(FILTERS.BRAND);
+  if (filters.minPrice) appliedClientFilters.push(FILTERS.MIN_PRICE);
+  if (filters.maxPrice) appliedClientFilters.push(FILTERS.MAX_PRICE);
 
   useEffect(() => {
     (async () => {
@@ -59,7 +62,7 @@ export default function Products() {
         });
       }
     })();
-  }, [currentPage, filters.page, filters.category]);
+  }, [filters.page, filters.category]);
 
   const handleNavigate = (page: number) => {
     const params = new URLSearchParams(searchParams);
@@ -78,13 +81,13 @@ export default function Products() {
 
   return (
     <div className="p-8 min-h-full flex flex-col">
-      {appliedFilters.length > 0 && (
+      {appliedClientFilters.length > 0 && (
         <div className="mb-4">
           <div className="flex items-center text-lg gap-2">
             <span>Applied Filters:</span>
 
             <div className="ml-4 flex items-center gap-2">
-              {appliedFilters.map((item) => (
+              {appliedClientFilters.map((item) => (
                 <div
                   key={item}
                   className="text-sm bg-blue-400 px-2 py-1 rounded text-white"
@@ -122,11 +125,11 @@ export default function Products() {
       )}
 
       {/* Removing pagination if client side filters are applied! */}
-      {appliedFilters.length === 0 && (
+      {appliedClientFilters.length === 0 && (
         <div className="mt-12 flex justify-center">
           <Pagination
             limit={PRODUCTS_LIMIT}
-            currentPage={currentPage}
+            currentPage={filters.page}
             total={appState.products.total}
             onNavigate={handleNavigate}
           />

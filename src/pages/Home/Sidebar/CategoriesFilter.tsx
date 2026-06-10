@@ -41,6 +41,7 @@ export default function CategoriesFilter() {
       params.set(FILTERS.CATEGORY, categorySlug);
     }
 
+    params.set(FILTERS.PAGE, "1"); //reset pagination
     setSearchParams(params);
   };
 

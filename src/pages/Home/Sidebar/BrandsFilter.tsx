@@ -11,9 +11,15 @@ export default function BrandsFilter() {
   const [showMore, setShowMore] = useState(false);
   const { appState } = useAppContext();
   const brands = useMemo(() => {
-    return appState.products.data
-      .map((item) => item.brand)
-      .filter((item) => Boolean(item));
+    const list = new Set<string>();
+
+    appState.products.data.forEach((item) => {
+      if (item.brand) {
+        list.add(item.brand);
+      }
+    });
+
+    return [...list];
   }, [appState.products.data]);
 
   const totalBrandsToShow = showMore ? brands.length : BRANDS_LIMIT;
