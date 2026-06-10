@@ -1,0 +1,9 @@
+.mainLayout {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 55px calc(100vh - 55px);
+
+  /* On ultra wide screen UI may look ugly, to prevent that adding this max width*/
+  max-width: 2000px;
+  margin: auto;
+}
